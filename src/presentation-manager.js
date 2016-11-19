@@ -1,6 +1,7 @@
 const electron = require('electron')
 const {ipcMain, BrowserWindow} = require('electron')
 const electronLocalshortcut = require('electron-localshortcut');
+const window = require('electron-window')
 const path = require('path')
 const url = require('url')
 
@@ -51,7 +52,7 @@ function getDisplays() {
 }
 
 function createNoteWindow(display) {
-    var window = new BrowserWindow({
+    var noteWindow = window.createWindow({
 	x: display.bounds.x,
 	y: display.bounds.y,
 	fullscreen: true,
@@ -60,18 +61,19 @@ function createNoteWindow(display) {
 	}
     })
 
-    window.loadURL(url.format({
-	pathname: path.join(__dirname, 'index.html'),
-	protocol: 'file:',
-	slashes: true
-    }))
+    const windowArgs = {
+	skipPages: 1,
+	pageOffset: 1
+    }
 
-    setupKeybindings(window)
-    return window
+    noteWindow.showUrl(path.join(__dirname, 'index.html'), windowArgs)
+
+    setupKeybindings(noteWindow)
+    return noteWindow
 }
 
 function createPresentationWindow(display) {
-    var window = new BrowserWindow({
+    var presentationWindow = window.createWindow({
 	x: display.bounds.x,
 	y: display.bounds.y,
 	fullscreen: true,
@@ -80,14 +82,15 @@ function createPresentationWindow(display) {
 	}
     })
 
-    window.loadURL(url.format({
-	pathname: path.join(__dirname, 'presentation-view.html'),
-	protocol: 'file:',
-	slashes: true
-    }))
+    const windowArgs = {
+	skipPages: 1,
+	pageOffset: 0
+    }
 
-    setupKeybindings(window)
-    return window
+    presentationWindow.showURL(path.join(__dirname, 'presentation-view.html'), windowArgs)
+
+    setupKeybindings(presentationWindow)
+    return presentationWindow
 }
 
 function setupKeybindings(win) {
@@ -111,6 +114,7 @@ function setupKeybindings(win) {
 
 // IPCs
 ipcMain.on('subscribeRenderer', (event) => {
+    console.log('subscribe')
     rendererIpcs.push(event.sender)
     event.sender.send('showPdf', currPdfUrl)
 })

@@ -22,6 +22,7 @@
   "dependencies": {
     "electron-localshortcut": "^1.0.0",
     "electron-settings": "^2.2.2",
+    "electron-window": "^0.8.1",
     "pdfjs-dist": "^1.6.304"
   }
 }
