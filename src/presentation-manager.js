@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {ipcMain, BrowserWindow} = require('electron')
+const {ipcMain} = require('electron')
 const electronLocalshortcut = require('electron-localshortcut');
 const window = require('electron-window')
 const path = require('path')
@@ -23,7 +23,7 @@ exports.startPresentation = function(pdfUrl) {
     if (displayInfo.external.length > 0) {
 	// Main window becomes note-window
 	mainWindow = createNoteWindow(displayInfo.main)
-	mainWindow.webContents.openDevTools()
+	//mainWindow.webContents.openDevTools()
 	displayInfo.external.forEach(disp => {
 	    presentationWindows.push(createPresentationWindow(disp))
 	})
@@ -66,7 +66,7 @@ function createNoteWindow(display) {
 	pageOffset: 1
     }
 
-    noteWindow.showUrl(path.join(__dirname, 'index.html'), windowArgs)
+    noteWindow.showUrl(path.join(__dirname, 'notes-view.html'), windowArgs)
 
     setupKeybindings(noteWindow)
     return noteWindow
@@ -114,7 +114,6 @@ function setupKeybindings(win) {
 
 // IPCs
 ipcMain.on('subscribeRenderer', (event) => {
-    console.log('subscribe')
     rendererIpcs.push(event.sender)
     event.sender.send('showPdf', currPdfUrl)
 })

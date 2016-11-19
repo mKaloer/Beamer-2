@@ -4,7 +4,7 @@
   Arguments:
       pageOffset: Number of pages to offset in the pdf
       skipPages:  Number of pages to skip from the page
- */
+*/
 
 const {ipcRenderer} = require('electron')
 const path = require('path')
@@ -13,9 +13,6 @@ const PDFJS = require('pdfjs-dist')
 PDFJS.PDFJS.workerSrc = path.join(path.dirname(require.resolve('pdfjs-dist')),'pdf.worker.js')
 
 require('electron-window').parseArgs()
-
-
-//'pdfjs-dist/build/pdf.worker.js'
 
 currPdf = null;
 currPage = null

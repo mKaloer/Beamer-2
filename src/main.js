@@ -1,9 +1,11 @@
 const electron = require('electron')
-const {ipcMain, app, BrowserWindow} = require('electron')
-
-const settings = require('electron-settings');
+const {ipcMain, app} = require('electron')
+const window = require('electron-window')
+const settings = require('electron-settings')
+const path = require('path')
 
 const presentationManager = require('./presentation-manager.js');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,23 +13,22 @@ let mainWindow
 
 function createWindow () {
     // Create the browser window.
-    startPresentation()
+    //startPresentation()
     // and load the index.html of the app.
-    mainWindow = new BrowserWindow({
+    mainWindow = window.createWindow({
 	webPreferences: {
 	    webSecurity: false,
 	}
-    });
+    })
+    mainWindow.showUrl(path.join(__dirname, 'index.html'))
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools()
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
-	// Dereference the window object, usually you would store windows
-	// in an array if your app supports multi windows, this is the time
-	// when you should delete the corresponding element.
 	mainWindow = null
+	app.exit()
     })
 }
 
@@ -53,11 +54,12 @@ app.on('activate', function () {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-function startPresentation() {
+function startPresentation(pdfUrl) {
     const {dialog} = require('electron')
-    pdfUrl = dialog.showOpenDialog({properties: ['openFile']})[0]
     currPdfUrl = pdfUrl
     presentationManager.startPresentation(pdfUrl)
 }
+
+ipcMain.on('startPresentation', (event, path) => {
+    startPresentation(path)
+})
