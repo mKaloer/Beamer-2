@@ -15,6 +15,7 @@ let rendererIpcs = []
 let mainWindow
 let presentationWindows = []
 let displayInfo
+let isHidden = false
 
 exports.startPresentation = function(pdfUrl) {
     currPdfUrl = pdfUrl
@@ -109,6 +110,12 @@ function setupKeybindings(win) {
     electronLocalshortcut.register(win, 'p', () => {
 	prevSlide()
     })
+    electronLocalshortcut.register(win, 'b', () => {
+	togglePresentation()
+    })
+    electronLocalshortcut.register(win, 'h', () => {
+	togglePresentation()
+    })
 }
 
 
@@ -117,7 +124,6 @@ ipcMain.on('subscribeRenderer', (event) => {
     rendererIpcs.push(event.sender)
     event.sender.send('showPdf', currPdfUrl)
 })
-
 
 function nextSlide() {
     rendererIpcs.forEach(function(renderer) {
@@ -128,5 +134,12 @@ function nextSlide() {
 function prevSlide() {
     rendererIpcs.forEach(function(renderer) {
 	renderer.send('gotoRelativeSlide', -1)
+    })
+}
+
+function togglePresentation() {
+    isHidden = !isHidden
+    rendererIpcs.forEach(function(renderer) {
+	renderer.send('togglePresentation', isHidden)
     })
 }

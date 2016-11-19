@@ -39,6 +39,10 @@ ipcRenderer.on('gotoPage', (event, slide) => {
     goToSlide(slide)
 })
 
+ipcRenderer.on('togglePresentation', (event, show) => {
+    togglePresentation(show)
+})
+
 
 _setup = function() {
     // Identify renderer
@@ -98,6 +102,15 @@ goToSlide = function(slideNbr) {
 	page.render(renderContext)
 
     });
+}
+
+togglePresentation = function(show) {
+    var canvas = document.getElementById('main-pdf')
+    if (show) {
+	canvas.style.visibility = "hidden"
+    } else {
+	canvas.style.visibility = "visible"
+    }
 }
 
 
