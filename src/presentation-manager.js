@@ -24,7 +24,6 @@ exports.startPresentation = function(pdfUrl) {
     if (displayInfo.external.length > 0) {
 	// Main window becomes note-window
 	mainWindow = createNoteWindow(displayInfo.main)
-	//mainWindow.webContents.openDevTools()
 	displayInfo.external.forEach(disp => {
 	    presentationWindows.push(createPresentationWindow(disp))
 	})
@@ -64,7 +63,8 @@ function createNoteWindow(display) {
 
     const windowArgs = {
 	skipPages: 1,
-	pageOffset: 1
+	pageOffset: 1,
+	type: 'notes'
     }
 
     noteWindow.showUrl(path.join(__dirname, 'notes-view.html'), windowArgs)
@@ -85,7 +85,8 @@ function createPresentationWindow(display) {
 
     const windowArgs = {
 	skipPages: 1,
-	pageOffset: 0
+	pageOffset: 0,
+	type: 'presenter'
     }
 
     presentationWindow.showURL(path.join(__dirname, 'presentation-view.html'), windowArgs)
@@ -120,26 +121,31 @@ function setupKeybindings(win) {
 
 
 // IPCs
-ipcMain.on('subscribeRenderer', (event) => {
-    rendererIpcs.push(event.sender)
+ipcMain.on('subscribeRenderer', (event, type) => {
+    rendererIpcs.push({
+	ipc: event.sender,
+	type: type
+    })
     event.sender.send('showPdf', currPdfUrl)
 })
 
 function nextSlide() {
     rendererIpcs.forEach(function(renderer) {
-	renderer.send('gotoRelativeSlide', 1)
+	renderer.ipc.send('gotoRelativeSlide', 1)
     })
 }
 
 function prevSlide() {
     rendererIpcs.forEach(function(renderer) {
-	renderer.send('gotoRelativeSlide', -1)
+	renderer.ipc.send('gotoRelativeSlide', -1)
     })
 }
 
 function togglePresentation() {
     isHidden = !isHidden
     rendererIpcs.forEach(function(renderer) {
-	renderer.send('togglePresentation', isHidden)
+	if (renderer.type == 'presenter') {
+	    renderer.ipc.send('togglePresentation', isHidden)
+	}
     })
 }

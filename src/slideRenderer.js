@@ -4,6 +4,7 @@
   Arguments:
       pageOffset: Number of pages to offset in the pdf
       skipPages:  Number of pages to skip from the page
+      type:       'presenter' or 'notes'
 */
 
 const {ipcRenderer} = require('electron')
@@ -22,6 +23,7 @@ const settings = require('electron-settings');
 pageOffset = window.__args__.pageOffset || 0
 // Skip n pages each time
 skipPages = window.__args__.skipPages || 0
+isPresenter = window.__args__.type == 'presenter'
 
 // ------------
 // IPC MESSAGES
@@ -46,10 +48,15 @@ ipcRenderer.on('togglePresentation', (event, show) => {
 
 _setup = function() {
     // Identify renderer
-    ipcRenderer.send('subscribeRenderer')
+    var type
+    if (isPresenter) {
+	type = 'presenter'
+    } else {
+	type = 'notes'
+    }
+    ipcRenderer.send('subscribeRenderer', type)
     // Get bg color
     settings.get('colors.presentation_bg').then(val => {
-	console.log(val)
 	if (val) {
 	    document.getElementsByTagName('BODY')[0].style.backgroundColor = val
 	}
