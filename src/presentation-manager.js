@@ -5,25 +5,35 @@ const window = require('electron-window')
 const path = require('path')
 const url = require('url')
 
+const NOTE_FORMAT_NO_NOTES = 'noNotes'
 
 // Current PDF url
 let currPdfUrl
+let noteFormat
 
 // List of all presentation listeners
 let rendererIpcs = []
 
+let notesViewIpc
 let mainWindow
 let presentationWindows = []
 let displayInfo
 let isHidden = false
+let timerStarted = false
 
-exports.startPresentation = function(pdfUrl) {
+exports.startPresentation = function(pdfUrl, noteFormat) {
     currPdfUrl = pdfUrl
+    noteFormat = noteFormat
     // Present on all external displays
     displayInfo = getDisplays()
     if (displayInfo.external.length > 0) {
-	// Main window becomes note-window
-	mainWindow = createNoteWindow(displayInfo.main)
+	if (noteFormat != NOTE_FORMAT_NO_NOTES) {
+	    // Main window becomes note-window
+	    mainWindow = createNoteWindow(displayInfo.main)
+	} else {
+	    // Main window becomes presentation window
+	    mainWindow = createPresentationWindow(displayInfo.main)
+	}
 	displayInfo.external.forEach(disp => {
 	    presentationWindows.push(createPresentationWindow(disp))
 	})
@@ -68,6 +78,7 @@ function createNoteWindow(display) {
     }
 
     noteWindow.showUrl(path.join(__dirname, 'notes-view.html'), windowArgs)
+    //noteWindow.webContents.openDevTools()
 
     setupKeybindings(noteWindow)
     return noteWindow
@@ -90,13 +101,16 @@ function createPresentationWindow(display) {
     }
 
     presentationWindow.showURL(path.join(__dirname, 'presentation-view.html'), windowArgs)
-
+    //presentationWindow.webContents.openDevTools()
     setupKeybindings(presentationWindow)
     return presentationWindow
 }
 
 function setupKeybindings(win) {
     electronLocalshortcut.register(win, 'Right', () => {
+	nextSlide()
+    })
+    electronLocalshortcut.register(win, 'PageUp', () => {
 	nextSlide()
     })
     electronLocalshortcut.register(win, 'n', () => {
@@ -106,6 +120,9 @@ function setupKeybindings(win) {
 	nextSlide()
     })
     electronLocalshortcut.register(win, 'Left', () => {
+	prevSlide()
+    })
+    electronLocalshortcut.register(win, 'PageDown', () => {
 	prevSlide()
     })
     electronLocalshortcut.register(win, 'p', () => {
@@ -129,7 +146,15 @@ ipcMain.on('subscribeRenderer', (event, type) => {
     event.sender.send('showPdf', currPdfUrl)
 })
 
+ipcMain.on('subscribeNotesView', (event) => {
+    notesViewIpc = event.sender
+})
+
 function nextSlide() {
+    if (!timerStarted && notesViewIpc) {
+	notesViewIpc.send('startTimer')
+	timerStarted = true
+    }
     rendererIpcs.forEach(function(renderer) {
 	renderer.ipc.send('gotoRelativeSlide', 1)
     })

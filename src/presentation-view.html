@@ -3,13 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <title>Presentation</title>
+    <link rel="stylesheet" href="assets/css/style.css">
   </head>
   <body>
-    <canvas id="main-pdf"/>
+    <canvas id="presentation-pdf"/>
   </body>
 
   <script>
     // You can also require other files to run in this process
-    require('./slideRenderer.js')
+    require('./slideRenderer.js')("presentation-pdf", "presenter")
   </script>
 </html>

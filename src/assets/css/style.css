@@ -1,0 +1,33 @@
+#ui-container {
+    margin: 16px;
+}
+
+#timer-text {
+    color: #FFFFFF;
+    font-size: 40pt;
+}
+
+/*
+#presentation-pdf {
+    width: 100%;
+    height: 100%;
+}*/
+
+#thumbnail-pdf {
+    width: 20%;
+    height: 20%;
+    float: right;
+}
+
+/*
+#notes-pdf {
+    width: 80%;
+    height: 80%;
+}
+*/
+/*
+#notes-pdf {
+    width: 100%;
+    height: 100%;
+}
+*/

@@ -3,24 +3,40 @@
   <head>
     <meta charset="UTF-8">
     <title>Beamer&#178;</title>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script>window.$ = window.jQuery = require('./assets/js/jquery.min.js');</script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
   </head>
   <body>
-    <h1>Beamer&#178;</h1>
-    <!-- Presentation settings -->
-    <div class="panel panel-default">
-      <div class="panel-heading">
-	<h3 class="panel-title">Presentation Setup</h3>
-      </div>
-      <div class="panel-body">
-	<div class="form-group">
-	  <label for="pdf-file">PDF File</label>
-	  <input type="file" accept="application/pdf" id="pdf-file">
+    <div id="ui-container">
+      <h1>Beamer&#178;</h1>
+      <!-- Presentation settings -->
+      <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">Presentation Setup</h3>
 	</div>
-	<button class="btn btn-primary" id="start-btn">Start Presentation</button>
+	<div class="panel-body">
+	  <div class="form-group">
+	    <label for="pdf-file">PDF File</label>
+	    <input type="file" accept="application/pdf" id="pdf-file">
+	  </div>
+	  <div class="radio">
+	    <label>
+	      <input type="radio" name="noteFormat" value="noNotes">
+	      No notes
+	    </label>
+	    <label>
+	      <input type="radio" name="noteFormat" value="secondPage" checked>
+	      Every second slide
+	    </label>
+	    <label>
+	      <input type="radio" name="noteFormat" value="separatePdf" disabled="true">
+	      Separate PDF
+	    </label>
+	  </div>
+	  <button class="btn btn-primary" id="start-btn">Start Presentation</button>
+	</div>
       </div>
     </div>
   </body>

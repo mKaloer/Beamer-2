@@ -21,6 +21,7 @@ function createWindow () {
 	}
     })
     mainWindow.showUrl(path.join(__dirname, 'index.html'))
+    //mainWindow.webContents.openDevTools()
 
     // Open the DevTools.
     //mainWindow.webContents.openDevTools()
@@ -47,17 +48,17 @@ app.on('window-all-closed', function () {
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+	createWindow()
+    }
 })
 
-function startPresentation(pdfUrl) {
+function startPresentation(pdfUrl, noteFormat) {
     const {dialog} = require('electron')
     currPdfUrl = pdfUrl
-    presentationManager.startPresentation(pdfUrl)
+    presentationManager.startPresentation(pdfUrl, noteFormat)
 }
 
 ipcMain.on('startPresentation', (event, path) => {
